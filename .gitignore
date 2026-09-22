@@ -1,0 +1,6 @@
+#Ambiente vitual Python
+.venv/
+#cache gerado pelo Python
+__pycache__/
+*.pyc
+
