@@ -35,6 +35,7 @@ A análise determinística usará regras e leitura de arquivos para produzir res
 ## Estado atual
 
 - [x] Ambiente virtual Python configurado localmente.
+- [x] Dependências diretas e indiretas registradas em `backend/requirements.txt`.
 - [x] Git inicializado e regras de exclusão para ambiente virtual e cache.
 - [x] Aplicação FastAPI executada com Uvicorn.
 - [x] Rota `GET /health` respondendo com HTTP 200.
@@ -123,7 +124,8 @@ docai/
 ├── .gitignore
 ├── README.md
 └── backend/
-    └── main.py
+    ├── main.py
+    └── requirements.txt
 ```
 
 O arquivo `backend/main.py` cria a aplicação FastAPI e registra a rota de verificação. A pasta local `backend/.venv` é ignorada pelo Git e não é distribuída com o repositório.
@@ -138,18 +140,18 @@ Após obter o projeto, abra um terminal na pasta raiz `docai` e execute cada com
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install fastapi==0.141.1 uvicorn==0.53.0
+python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload
 ```
 
 Se o ambiente `.venv` já estiver criado e as dependências instaladas, basta ativá-lo e executar o último comando. Caso o PowerShell bloqueie o script de ativação, é possível usar diretamente o interpretador do ambiente:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install fastapi==0.141.1 uvicorn==0.53.0
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 
-As versões acima foram utilizadas na primeira validação local. Ainda não há arquivo de dependências ou lockfile; portanto, as versões das dependências transitivas não estão fixadas.
+O arquivo `backend/requirements.txt` registra as versões das dependências diretas e indiretas do backend. Sua leitura pelo pip e a consistência do ambiente atual foram verificadas com `pip install -r requirements.txt` e `pip check`. A instalação em um ambiente novo ainda não foi testada.
 
 Mantenha o terminal aberto enquanto utiliza a API. A opção `--reload` recarrega a aplicação quando o código é alterado e é destinada ao desenvolvimento. Para parar o servidor, pressione `Ctrl+C`.
 
@@ -169,7 +171,7 @@ Essa é a documentação da API do próprio DocAI. A geração de documentação
 
 ## Próximas etapas
 
-1. Registrar dependências e adicionar testes do backend mínimo.
+1. Validar a instalação em um ambiente novo e adicionar testes do backend mínimo.
 2. Evoluir a organização do backend e a validação das entradas.
 3. Receber URLs públicas do GitHub e obter repositórios com limites de segurança.
 4. Implementar scanner, identificação de linguagens e detecção de tecnologias.
