@@ -126,6 +126,7 @@ docai/
 ├── .gitignore
 ├── README.md
 └── backend/
+    ├── __init__.py
     ├── main.py
     ├── requirements.txt
     ├── requirements-dev.txt
@@ -142,18 +143,17 @@ Os comandos abaixo usam **PowerShell no Windows**. O ambiente utilizado no desen
 Após obter o projeto, abra um terminal na pasta raiz `docai` e execute cada comando separadamente:
 
 ```powershell
-cd backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m uvicorn main:app --reload
+python -m venv backend\.venv
+.\backend\.venv\Scripts\Activate.ps1
+python -m pip install -r .\backend\requirements.txt
+python -m uvicorn backend.main:app --reload
 ```
 
 Se o ambiente `.venv` já estiver criado e as dependências instaladas, basta ativá-lo e executar o último comando. Caso o PowerShell bloqueie o script de ativação, é possível usar diretamente o interpretador do ambiente:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn main:app --reload
+.\backend\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.txt
+.\backend\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload
 ```
 
 O arquivo `backend/requirements.txt` registra as versões das dependências diretas e indiretas do backend. A instalação em um ambiente virtual novo, a consistência das dependências e a importação da aplicação foram verificadas no Windows com Python 3.12.10. Após essa verificação, o Starlette foi atualizado para 1.7.0; essa atualização foi validada no ambiente de desenvolvimento com `pip check` e o teste de `/health`. A configuração atual completa ainda não foi reinstalada em um ambiente vazio.
@@ -176,12 +176,12 @@ Essa é a documentação da API do próprio DocAI. A geração de documentação
 
 ## Desenvolvimento e testes
 
-Com o ambiente `backend/.venv` criado, execute os comandos abaixo **dentro da pasta `backend`**:
+Com o ambiente `backend/.venv` criado, execute os comandos abaixo na raiz `docai`:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pip check
-.\.venv\Scripts\python.exe -m pytest tests/test_health.py -v
+.\backend\.venv\Scripts\python.exe -m pip install -r .\backend\requirements-dev.txt
+.\backend\.venv\Scripts\python.exe -m pip check
+.\backend\.venv\Scripts\python.exe -m pytest .\backend\tests -v
 ```
 
 O arquivo `requirements-dev.txt` inclui `requirements.txt` e adiciona `pytest==9.1.1` e `httpx2==2.13.1`. As dependências indiretas exclusivas dessas ferramentas de teste ainda não estão fixadas. Os comandos usam diretamente o Python do ambiente do backend, sem depender de sua ativação no terminal.
@@ -193,7 +193,7 @@ O resultado esperado é `1 passed`. A execução local foi validada sem avisos a
 Para executar todos os testes da pasta:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest tests -v
+.\backend\.venv\Scripts\python.exe -m pytest .\backend\tests -v
 ```
 
 ## Próximas etapas
