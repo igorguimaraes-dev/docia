@@ -126,6 +126,9 @@ docai/
 ├── .gitignore
 ├── README.md
 └── backend/
+    ├── api/
+    │   ├── __init__.py
+    │   └── health.py
     ├── __init__.py
     ├── main.py
     ├── requirements.txt
