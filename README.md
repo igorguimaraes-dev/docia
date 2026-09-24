@@ -40,13 +40,15 @@ A análise determinística usará regras e leitura de arquivos para produzir res
 - [x] Aplicação FastAPI executada com Uvicorn.
 - [x] Rota `GET /health` respondendo com HTTP 200.
 - [x] Swagger UI disponível em `/docs`.
+- [x] Teste automatizado de `/health` com pytest e TestClient.
+- [x] Dependências de desenvolvimento registradas em `backend/requirements-dev.txt`.
 - [ ] Recebimento e clonagem de repositórios públicos.
 - [ ] Scanner de arquivos e detecção de tecnologias.
 - [ ] Modelo intermediário e analisadores específicos.
 - [ ] Geração de documentação e integração com IA.
 - [ ] Interface web, upload ZIP, persistência e Docker.
 
-As verificações realizadas até aqui são manuais. Ainda não há testes automatizados no projeto.
+Além das verificações manuais, o teste automatizado confere o status HTTP 200 e o corpo JSON de `/health`.
 
 ## Arquitetura planejada
 
@@ -113,7 +115,7 @@ Nem toda tecnologia terá todos esses elementos. Campos, tipos e critérios de e
 | Validação e modelos | Pydantic | Instalado como dependência do FastAPI; modelos próprios ainda não implementados |
 | Frontend | Next.js, React, TypeScript e Tailwind CSS | Planejado |
 | IA | OpenAI API | Planejado |
-| Testes | pytest | Planejado |
+| Testes | pytest, TestClient e HTTPX2 | Em uso |
 | Infraestrutura | Docker e Docker Compose | Planejado |
 | Persistência | PostgreSQL | Evolução futura |
 
@@ -125,7 +127,10 @@ docai/
 ├── README.md
 └── backend/
     ├── main.py
-    └── requirements.txt
+    ├── requirements.txt
+    ├── requirements-dev.txt
+    └── tests/
+        └── test_health.py
 ```
 
 O arquivo `backend/main.py` cria a aplicação FastAPI e registra a rota de verificação. A pasta local `backend/.venv` é ignorada pelo Git e não é distribuída com o repositório.
@@ -151,7 +156,7 @@ Se o ambiente `.venv` já estiver criado e as dependências instaladas, basta at
 .\.venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 
-O arquivo `backend/requirements.txt` registra as versões das dependências diretas e indiretas do backend. Sua leitura pelo pip e a consistência do ambiente atual foram verificadas com `pip install -r requirements.txt` e `pip check`. A instalação em um ambiente novo ainda não foi testada.
+O arquivo `backend/requirements.txt` registra as versões das dependências diretas e indiretas do backend. A instalação em um ambiente virtual novo, a consistência das dependências e a importação da aplicação foram verificadas no Windows com Python 3.12.10. Após essa verificação, o Starlette foi atualizado para 1.7.0; essa atualização foi validada no ambiente de desenvolvimento com `pip check` e o teste de `/health`. A configuração atual completa ainda não foi reinstalada em um ambiente vazio.
 
 Mantenha o terminal aberto enquanto utiliza a API. A opção `--reload` recarrega a aplicação quando o código é alterado e é destinada ao desenvolvimento. Para parar o servidor, pressione `Ctrl+C`.
 
@@ -169,9 +174,31 @@ A documentação interativa está em [http://127.0.0.1:8000/docs](http://127.0.0
 
 Essa é a documentação da API do próprio DocAI. A geração de documentação dos repositórios analisados será desenvolvida posteriormente.
 
+## Desenvolvimento e testes
+
+Com o ambiente `backend/.venv` criado, execute os comandos abaixo **dentro da pasta `backend`**:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m pytest tests/test_health.py -v
+```
+
+O arquivo `requirements-dev.txt` inclui `requirements.txt` e adiciona `pytest==9.1.1` e `httpx2==2.13.1`. As dependências indiretas exclusivas dessas ferramentas de teste ainda não estão fixadas. Os comandos usam diretamente o Python do ambiente do backend, sem depender de sua ativação no terminal.
+
+O teste em `backend/tests/test_health.py` usa o TestClient para consultar a aplicação dentro do processo de teste, sem iniciar o Uvicorn nem abrir uma porta de rede. Ele verifica se `GET /health` retorna HTTP 200 e `{"status": "ok"}`.
+
+O resultado esperado é `1 passed`. A execução local foi validada sem avisos após a adoção de HTTPX2 e a atualização do Starlette. Esse teste cobre apenas o comportamento da rota de verificação.
+
+Para executar todos os testes da pasta:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests -v
+```
+
 ## Próximas etapas
 
-1. Validar a instalação em um ambiente novo e adicionar testes do backend mínimo.
+1. Validar a configuração completa de desenvolvimento em um ambiente novo e ampliar os testes conforme as funcionalidades evoluírem.
 2. Evoluir a organização do backend e a validação das entradas.
 3. Receber URLs públicas do GitHub e obter repositórios com limites de segurança.
 4. Implementar scanner, identificação de linguagens e detecção de tecnologias.

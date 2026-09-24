@@ -7,3 +7,5 @@ __pycache__/
 # Contexto local do Codex
 /.codex/
 
+# Cache dos testes
+.pytest_cache/
